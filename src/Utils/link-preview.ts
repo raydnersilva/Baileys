@@ -4,7 +4,7 @@ import { ILogger } from './logger'
 import { prepareWAMessageMedia } from './messages'
 import { extractImageThumb, getHttpStream } from './messages-media'
 
-const THUMBNAIL_WIDTH_PX = 192
+const THUMBNAIL_WIDTH_PX = 1024
 
 /** Fetches an image and generates a thumbnail for it */
 const getCompressedJpegThumbnail = async (url: string, { thumbnailWidth, fetchOpts }: URLGenerationOptions) => {
@@ -70,7 +70,9 @@ export const getUrlInfo = async (
 					return false
 				}
 			},
-			headers: opts.fetchOpts as {}
+			headers: {
+    			'User-Agent': 'Twitterbot',
+			}
 		})
 		if (info && 'title' in info && info.title) {
 			const [image] = info.images
@@ -83,22 +85,24 @@ export const getUrlInfo = async (
 				originalThumbnailUrl: image
 			}
 
-			if (opts.uploadImage) {
-				const { imageMessage } = await prepareWAMessageMedia(
-					{ image: { url: image } },
-					{
-						upload: opts.uploadImage,
-						mediaTypeOverride: 'thumbnail-link',
-						options: opts.fetchOpts
+			if (image) {
+				if (opts.uploadImage) {
+					const { imageMessage } = await prepareWAMessageMedia(
+						{ image: { url: image } },
+						{
+							upload: opts.uploadImage,
+							mediaTypeOverride: 'thumbnail-link',
+							options: opts.fetchOpts
+						}
+					)
+					urlInfo.jpegThumbnail = imageMessage?.jpegThumbnail ? Buffer.from(imageMessage.jpegThumbnail) : undefined
+					urlInfo.highQualityThumbnail = imageMessage || undefined
+				} else {
+					try {
+						urlInfo.jpegThumbnail = (await getCompressedJpegThumbnail(image, opts)).buffer
+					} catch (error) {
+						opts.logger?.debug({ err: error.stack, url: previewLink }, 'error in generating thumbnail')
 					}
-				)
-				urlInfo.jpegThumbnail = imageMessage?.jpegThumbnail ? Buffer.from(imageMessage.jpegThumbnail) : undefined
-				urlInfo.highQualityThumbnail = imageMessage || undefined
-			} else {
-				try {
-					urlInfo.jpegThumbnail = image ? (await getCompressedJpegThumbnail(image, opts)).buffer : undefined
-				} catch (error) {
-					opts.logger?.debug({ err: error.stack, url: previewLink }, 'error in generating thumbnail')
 				}
 			}
 
