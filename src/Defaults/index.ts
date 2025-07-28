@@ -6,7 +6,7 @@ import { makeLibSignalRepository } from '../Signal/libsignal'
 import type { AuthenticationState, MediaType, SocketConfig, WAVersion } from '../Types'
 import { Browsers } from '../Utils'
 import logger from '../Utils/logger'
-import getRemoteVersion from './remote-version'
+import { version } from './baileys-version.json'
 
 export const UNAUTHORIZED_CODES = [401, 403, 419]
 
@@ -36,18 +36,9 @@ export const PROCESSABLE_HISTORY_TYPES = [
 	proto.Message.HistorySyncNotification.HistorySyncType.ON_DEMAND
 ]
 
-let remoteVersion: number[] = [2, 2400, 10] 
-
-export const setRemoteVersion = (v: number[]) => {
-  remoteVersion = v
-}
-
-export const VERSION_REMOTE = async () => {
-	return await getRemoteVersion();
-}
 
 export const DEFAULT_CONNECTION_CONFIG: SocketConfig = {
-	version: remoteVersion as WAVersion,
+	version: version as WAVersion,
 	browser: Browsers.ubuntu('Chrome'),
 	waWebSocketUrl: 'wss://web.whatsapp.com/ws/chat',
 	connectTimeoutMs: 20_000,
