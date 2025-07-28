@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import https from 'https';
 
-export const getRemoteVersion = (): Promise<number[]> => {
+const getRemoteVersion = (): Promise<number[]> => {
   return new Promise((resolve, reject) => {
     https.get('https://raw.githubusercontent.com/raydnersilva/baileys-version-auto/main/baileys-version.json', (res) => {
       let data = ''
@@ -24,3 +24,4 @@ export const getRemoteVersion = (): Promise<number[]> => {
   })
 }
 
+export default getRemoteVersion;
