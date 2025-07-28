@@ -23,3 +23,4 @@ export const getRemoteVersion = (): Promise<number[]> => {
     })
   })
 }
+

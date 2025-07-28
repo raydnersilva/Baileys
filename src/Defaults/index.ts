@@ -42,7 +42,7 @@ export const setRemoteVersion = (v: number[]) => {
   remoteVersion = v
 }
 
-export const getVersion = async (v:number[]) => {
+export const getVersionRemote = async () => {
 	return await getRemoteVersion();
 }
 
