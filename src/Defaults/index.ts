@@ -6,6 +6,7 @@ import { makeLibSignalRepository } from '../Signal/libsignal'
 import type { AuthenticationState, MediaType, SocketConfig, WAVersion } from '../Types'
 import { Browsers } from '../Utils'
 import logger from '../Utils/logger'
+import { getRemoteVersion } from './remote-version'
 
 export const UNAUTHORIZED_CODES = [401, 403, 419]
 
@@ -39,6 +40,10 @@ let remoteVersion: number[] = [2, 2400, 10]
 
 export const setRemoteVersion = (v: number[]) => {
   remoteVersion = v
+}
+
+export const getVersion = async (v:number[]) => {
+	return await getRemoteVersion();
 }
 
 export const DEFAULT_CONNECTION_CONFIG: SocketConfig = {
